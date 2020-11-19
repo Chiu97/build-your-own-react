@@ -2,17 +2,17 @@ import { RequestIdleCallbackDeadline } from './@types/requestIdleCallbackPolyfil
 import DEFS from './CONSTANTS'
 import { createDOM, updateDom } from './dom'
 import { getFibreParentDom, isFunctionComponent } from './utils'
-let wipRoot: SimpleFibre|null = null
-let currentRoot: SimpleFibre|null = null
-let deletions: SimpleFibre[] = []
+let wipRoot: FibreNode|null = null
+let currentRoot: FibreNode|null = null
+let deletions: FibreNode[] = []
 
-function setWipRootAndStartWorking (root: SimpleFibre) {
+function setWipRootAndStartWorking (root: FibreNode) {
     wipRoot = root
     wipRoot.alternate = currentRoot 
     nextWorkUnit = wipRoot
 }
 
-const commitWork = (fibre: SimpleFibre|null) => {
+const commitWork = (fibre: FibreNode|null) => {
     if (!fibre) return
     const parentDom = getFibreParentDom(fibre)
 
@@ -37,7 +37,7 @@ const commitWork = (fibre: SimpleFibre|null) => {
     commitWork(fibre.sibling)
 }
 
-const commitDeletion = (fibre: SimpleFibre, parentDom: HTMLElement|Text) => {
+const commitDeletion = (fibre: FibreNode, parentDom: HTMLElement|Text) => {
     if (!fibre||!parentDom) return
     if (fibre.dom) {
         parentDom.removeChild(fibre.dom)
@@ -61,7 +61,7 @@ const commitRootWork = (): void => {
  * 2. create children fibre (reconcileChildren did it)
  * 3. return next work fibre
  */
-const performUnitOfWork = (currentFibre: SimpleFibre): SimpleFibre => {
+const performUnitOfWork = (currentFibre: FibreNode): FibreNode => {
     if (!currentFibre.dom&&!isFunctionComponent(currentFibre)) {
         currentFibre.dom = createDOM(currentFibre)
     }
@@ -86,15 +86,15 @@ const performUnitOfWork = (currentFibre: SimpleFibre): SimpleFibre => {
 /**
  * 通过对新老fibre type的对比，更新effect tag，标记其所需要进行的操作
  */
-const reconcileChildren = (wipFibre: SimpleFibre) => {
+const reconcileChildren = (wipFibre: FibreNode) => {
     const r_elements: ReactiveElement[] = typeof wipFibre.type === 'function' ? [wipFibre.type(wipFibre.props)] : wipFibre.props.children
-    let oldFibre: SimpleFibre|null = wipFibre?.alternate?.child || null
+    let oldFibre: FibreNode|null = wipFibre?.alternate?.child || null
     let idx = 0
-    let prevSibling: SimpleFibre
+    let prevSibling: FibreNode
     while (idx<r_elements.length||oldFibre) {
         const element =r_elements[idx]
 
-        let newFibre: SimpleFibre|null = null
+        let newFibre: FibreNode|null = null
 
         const sameType = oldFibre && element && element.type === oldFibre.type
         if (sameType) {
@@ -137,7 +137,7 @@ const reconcileChildren = (wipFibre: SimpleFibre) => {
     }
 }
 
-let nextWorkUnit: SimpleFibre|null = null
+let nextWorkUnit: FibreNode|null = null
 const workLoop = (deadline: RequestIdleCallbackDeadline) => {
     let enoughTime = true
     while (nextWorkUnit && enoughTime) {

@@ -29,7 +29,7 @@ const updateDom = (dom: HTMLElement|Text, prevProps: any, nextProps: any) => {
     })
 }
 
-const createDOM = (fibre: SimpleFibre): HTMLElement|Text => {
+const createDOM = (fibre: FibreNode): HTMLElement|Text => {
     const dom = fibre.type === DEFS.TEXT_ELEMENT ? document.createTextNode(fibre.props.nodeVal||'') : document.createElement(fibre.type as string)
 
     updateDom(dom, {}, fibre.props)
@@ -38,7 +38,7 @@ const createDOM = (fibre: SimpleFibre): HTMLElement|Text => {
 }
 
 function render(element: ReactiveElement, container: HTMLElement|Text) {
-    const wipRoot: SimpleFibre = {
+    const wipRoot: FibreNode = {
       dom: container,
       parent: null,
       props: {

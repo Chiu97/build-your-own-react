@@ -10,27 +10,17 @@ interface ReactiveProps {
     [key: string]: any
 }
 
-interface FibreNode {
-    type: string;
-    $$type?: Symbol|string,
-    key?: string;
-    children: FibreNode[],
-    sibling: FibreNode[],
-    alternate: FibreNode, // the alternate fibre node correponse with the same node
-    return?: FibreNode|null // virtual stack frame, usually back to it's parent
-}
-
 type ReactiveElementFunction = (props: any) => ReactiveElement
 
-interface SimpleFibre {
+interface FibreNode {
     $$type?: Symbol|string;
     dom?: HTMLElement|Text;
     type?: string|ReactiveElementFunction;
     key?: string;
-    child?: SimpleFibre;
-    sibling?: SimpleFibre;
-    parent: SimpleFibre|null;
+    child?: FibreNode;
+    sibling?: FibreNode;
+    parent: FibreNode|null;
     props: ReactiveProps;
-    alternate?: SimpleFibre|null;
+    alternate?: FibreNode|null;
     effectTag?: string;
 }
