@@ -15,7 +15,9 @@ interface DomUpdateOperations {
 }
 
 /**
- * 返回此次dom更新需要做出哪些变更
+ * check next update opertions on a fibre
+ * if it needs update(node attributes update or add new node), push it to updateProperties array
+ * if the props attributes don't exist any more, push it to deleteProperties array
  */
 export function updateDomOperations (prevProps: any, nextProps: any): DomUpdateOperations {
     let operations: DomUpdateOperations = {}

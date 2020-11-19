@@ -3,7 +3,7 @@ import DEFS from './CONSTANTS'
 import { setWipRootAndStartWorking } from "./reconciler"
 
 /**
- * 根据props对比，更新dom
+ * update node, according to previous Props and new Props
  */
 const updateDom = (dom: HTMLElement|Text, prevProps: any, nextProps: any) => {
     const operations = updateDomOperations(prevProps, nextProps)
