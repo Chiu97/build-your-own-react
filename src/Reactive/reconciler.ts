@@ -1,6 +1,7 @@
 import { RequestIdleCallbackDeadline } from './@types/requestIdleCallbackPolyfill'
 import DEFS from './CONSTANTS'
 import { createDOM, updateDom } from './dom'
+import { getFibreParentDom } from './utils'
 let wipRoot: SimpleFibre|null = null
 let currentRoot: SimpleFibre|null = null
 let deletions: SimpleFibre[] = []
@@ -21,7 +22,7 @@ function render(element: ReactiveElement, container: HTMLElement|Text) {
 
 const commitWork = (fibre: SimpleFibre|null) => {
     if (!fibre) return
-    const parentDom = fibre?.parent?.dom
+    const parentDom = getFibreParentDom(fibre)
 
     switch(fibre.effectTag) {
         case DEFS.EFFECT_REPLACE:

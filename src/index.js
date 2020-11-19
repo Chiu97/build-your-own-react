@@ -11,7 +11,6 @@ const FirstCmp = () => {
 }
 
 const el = FirstCmp()
-// console.log(elements)
 Reactive.interruptibleRender(el, document.getElementById('root'))
 
 export {FirstCmp}

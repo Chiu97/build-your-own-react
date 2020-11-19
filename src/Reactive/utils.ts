@@ -31,6 +31,14 @@ export function updateDomOperations (prevProps: any, nextProps: any): DomUpdateO
     return operations
 }
 
-export function isFunctionComponent(element: SimpleFibre|ReactiveElement): boolean {
+export function isFunctionComponent (element: SimpleFibre|ReactiveElement): boolean {
     return element.type instanceof Function
+}
+
+export function getFibreParentDom (fibre: SimpleFibre): HTMLElement|null|Text {
+    let parent = fibre.parent||null
+    while (parent) {
+        if (parent.dom) return parent.dom
+    }
+    return null
 }
