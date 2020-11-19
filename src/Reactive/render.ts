@@ -22,7 +22,7 @@ const recursivelyRender = (el: ReactiveElement, container: HTMLElement): HTMLEle
         domEl[key] = el.props[key]
     })
     if (Array.isArray(el.props.children)&&el.props.children.length>0) {
-        el.props.children.forEach(child => render(child, domEl))
+        el.props.children.forEach(child => recursivelyRender(child, domEl))
     }
     container.appendChild(domEl)
     return domEl

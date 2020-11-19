@@ -30,3 +30,7 @@ export function updateDomOperations (prevProps: any, nextProps: any): DomUpdateO
 
     return operations
 }
+
+export function isFunctionComponent(element: SimpleFibre|ReactiveElement): boolean {
+    return element.type instanceof Function
+}

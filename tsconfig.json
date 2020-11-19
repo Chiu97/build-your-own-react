@@ -2,5 +2,6 @@
     "compilerOptions": {
         "noImplicitAny": true,
         "allowJs": true, 
+        "outDir": "./dist"
     }
 }

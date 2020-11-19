@@ -23,7 +23,7 @@ interface FibreNode {
 interface SimpleFibre {
     $$type?: Symbol|string;
     dom?: HTMLElement|Text;
-    type: string;
+    type: string|Function;
     key?: string;
     child?: SimpleFibre;
     sibling?: SimpleFibre;

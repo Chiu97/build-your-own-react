@@ -1,4 +1,4 @@
-const reservedPropsName = ['children']
+const reservedPropsName = ['children', 'key']
 
 export {
     reservedPropsName
