@@ -10,7 +10,7 @@ const FirstCmp = () => {
     )
 }
 
-const el = FirstCmp()
+const el = <FirstCmp />
 Reactive.interruptibleRender(el, document.getElementById('root'))
 
 export {FirstCmp}

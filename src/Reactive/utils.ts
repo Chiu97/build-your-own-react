@@ -39,6 +39,7 @@ export function getFibreParentDom (fibre: SimpleFibre): HTMLElement|null|Text {
     let parent = fibre.parent||null
     while (parent) {
         if (parent.dom) return parent.dom
+        parent = parent.parent
     }
     return null
 }

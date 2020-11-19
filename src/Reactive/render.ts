@@ -14,7 +14,7 @@ const recursivelyRender = (el: ReactiveElement, container: HTMLElement): HTMLEle
         return textNode
     }
 
-    const domEl = document.createElement(el.type)
+    const domEl = document.createElement(el.type as string)
 
     const validPropsKeys = Object.keys(el.props).filter(key => !reservedPropsName.includes(key))
     validPropsKeys.forEach(key =>{

@@ -1,4 +1,4 @@
-import { isEvent, isFunctionComponent, updateDomOperations } from "./utils"
+import { isEvent, updateDomOperations } from "./utils"
 import DEFS from './CONSTANTS'
 
 /**
@@ -29,8 +29,7 @@ const updateDom = (dom: HTMLElement|Text, prevProps: any, nextProps: any) => {
 }
 
 const createDOM = (fibre: SimpleFibre): HTMLElement|Text => {
-    const getStringType = isFunctionComponent(fibre) ? '' : fibre.type as string
-    const dom = fibre.type === DEFS.TEXT_ELEMENT ? document.createTextNode(fibre.props.nodeVal||'') : document.createElement(getStringType)
+    const dom = fibre.type === DEFS.TEXT_ELEMENT ? document.createTextNode(fibre.props.nodeVal||'') : document.createElement(fibre.type as string)
 
     updateDom(dom, {}, fibre.props)
 

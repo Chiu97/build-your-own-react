@@ -1,7 +1,7 @@
 import { RequestIdleCallbackDeadline } from './@types/requestIdleCallbackPolyfill'
 import DEFS from './CONSTANTS'
 import { createDOM, updateDom } from './dom'
-import { getFibreParentDom } from './utils'
+import { getFibreParentDom, isFunctionComponent } from './utils'
 let wipRoot: SimpleFibre|null = null
 let currentRoot: SimpleFibre|null = null
 let deletions: SimpleFibre[] = []
@@ -9,13 +9,13 @@ let deletions: SimpleFibre[] = []
 function render(element: ReactiveElement, container: HTMLElement|Text) {
     wipRoot = {
       dom: container,
-      type: '',
       parent: null,
       props: {
         children: [element],
       },
       alternate: currentRoot,
     }
+
     deletions = []
     nextWorkUnit = wipRoot
 }
@@ -36,18 +36,26 @@ const commitWork = (fibre: SimpleFibre|null) => {
             }
             break
         case DEFS.EFFECT_DELETE:
-            parentDom && parentDom.removeChild(fibre.dom)
+            commitDeletion(fibre, parentDom)
             break
         default:
             break
     }
-
     commitWork(fibre.child)
     commitWork(fibre.sibling)
 }
 
+const commitDeletion = (fibre: SimpleFibre, parentDom: HTMLElement|Text) => {
+    if (!fibre||!parentDom) return
+    if (fibre.dom) {
+        parentDom.removeChild(fibre.dom)
+    } else {
+        commitDeletion(fibre.child, parentDom)
+    }
+}
+
 const commitRootWork = (): void => {
-    deletions.forEach(commitRootWork)
+    deletions.forEach(commitWork)
     commitWork(wipRoot.child)
     currentRoot = wipRoot
     wipRoot = null
@@ -56,12 +64,12 @@ const commitRootWork = (): void => {
 
 /**
  * depth first traversal
- * 1. create dom for current fibre
- * 2. create children fibre
+ * 1. create dom for current fibre (function component doesn't has dom node)
+ * 2. create children fibre (reconcileChildren did it)
  * 3. return next work fibre
  */
 const performUnitOfWork = (currentFibre: SimpleFibre): SimpleFibre => {
-    if (!currentFibre.dom) {
+    if (!currentFibre.dom&&!isFunctionComponent(currentFibre)) {
         currentFibre.dom = createDOM(currentFibre)
     }
 
@@ -86,7 +94,7 @@ const performUnitOfWork = (currentFibre: SimpleFibre): SimpleFibre => {
  * 通过对新老fibre type的对比，更新effect tag，标记其所需要进行的操作
  */
 const reconcileChildren = (wipFibre: SimpleFibre) => {
-    const r_elements = wipFibre.props.children
+    const r_elements: ReactiveElement[] = typeof wipFibre.type === 'function' ? [wipFibre.type(wipFibre.props)] : wipFibre.props.children
     let oldFibre: SimpleFibre|null = wipFibre?.alternate?.child || null
     let idx = 0
     let prevSibling: SimpleFibre
@@ -95,7 +103,7 @@ const reconcileChildren = (wipFibre: SimpleFibre) => {
 
         let newFibre: SimpleFibre|null = null
 
-        const sameType = wipFibre && element && element.type === wipFibre.type
+        const sameType = oldFibre && element && element.type === oldFibre.type
         if (sameType) {
             newFibre = {
                 type: oldFibre.type,

@@ -1,6 +1,6 @@
 interface ReactiveElement {
     $$type: Symbol|string,
-    type: string,
+    type: string|ReactiveElementFunction,
     props: ReactiveProps
 }
 
@@ -20,10 +20,12 @@ interface FibreNode {
     return?: FibreNode|null // virtual stack frame, usually back to it's parent
 }
 
+type ReactiveElementFunction = (props: any) => ReactiveElement
+
 interface SimpleFibre {
     $$type?: Symbol|string;
     dom?: HTMLElement|Text;
-    type: string|Function;
+    type?: string|ReactiveElementFunction;
     key?: string;
     child?: SimpleFibre;
     sibling?: SimpleFibre;
