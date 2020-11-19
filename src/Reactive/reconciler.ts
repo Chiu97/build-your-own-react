@@ -6,17 +6,9 @@ let wipRoot: SimpleFibre|null = null
 let currentRoot: SimpleFibre|null = null
 let deletions: SimpleFibre[] = []
 
-function render(element: ReactiveElement, container: HTMLElement|Text) {
-    wipRoot = {
-      dom: container,
-      parent: null,
-      props: {
-        children: [element],
-      },
-      alternate: currentRoot,
-    }
-
-    deletions = []
+function setWipRootAndStartWorking (root: SimpleFibre) {
+    wipRoot = root
+    wipRoot.alternate = currentRoot 
     nextWorkUnit = wipRoot
 }
 
@@ -59,6 +51,7 @@ const commitRootWork = (): void => {
     commitWork(wipRoot.child)
     currentRoot = wipRoot
     wipRoot = null
+    deletions = []
 }
 
 
@@ -161,4 +154,4 @@ const workLoop = (deadline: RequestIdleCallbackDeadline) => {
 
 window.requestIdleCallback(workLoop)
 
-export { render as interruptibleRender }
+export { setWipRootAndStartWorking }

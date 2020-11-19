@@ -1,5 +1,6 @@
 import { isEvent, updateDomOperations } from "./utils"
 import DEFS from './CONSTANTS'
+import { setWipRootAndStartWorking } from "./reconciler"
 
 /**
  * 根据props对比，更新dom
@@ -36,6 +37,19 @@ const createDOM = (fibre: SimpleFibre): HTMLElement|Text => {
     return dom
 }
 
+function render(element: ReactiveElement, container: HTMLElement|Text) {
+    const wipRoot: SimpleFibre = {
+      dom: container,
+      parent: null,
+      props: {
+        children: [element],
+      },
+      alternate: null,
+    }
+
+    setWipRootAndStartWorking(wipRoot)
+}
+
 export {
-    updateDom, createDOM
+    updateDom, createDOM, render as interruptibleRender
 }
