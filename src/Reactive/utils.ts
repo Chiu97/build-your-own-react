@@ -31,11 +31,11 @@ export function updateDomOperations (prevProps: any, nextProps: any): DomUpdateO
     return operations
 }
 
-export function isFunctionComponent (element: SimpleFibre|ReactiveElement): boolean {
+export function isFunctionComponent (element: FibreNode|ReactiveElement): boolean {
     return element.type instanceof Function
 }
 
-export function getFibreParentDom (fibre: SimpleFibre): HTMLElement|null|Text {
+export function getFibreParentDom (fibre: FibreNode): HTMLElement|null|Text {
     let parent = fibre.parent||null
     while (parent) {
         if (parent.dom) return parent.dom
