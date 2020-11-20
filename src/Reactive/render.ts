@@ -9,7 +9,7 @@ const recursivelyRender = (el: ReactiveElement, container: HTMLElement): HTMLEle
     if (!isReactiveElement(el)) return null
 
     if (el.type === constants.TEXT_ELEMENT) {
-        const textNode = document.createTextNode(el.props.nodeVal)
+        const textNode = document.createTextNode(el.props.nodeValue)
         container.appendChild(textNode)
         return textNode
     }

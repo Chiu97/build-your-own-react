@@ -3,13 +3,46 @@ import DEFS from './CONSTANTS'
 import { createDOM, updateDom } from './dom'
 import { getFibreParentDom, isFunctionComponent } from './utils'
 let wipRoot: FibreNode|null = null
+let wipFibre: FibreNode
 let currentRoot: FibreNode|null = null
 let deletions: FibreNode[] = []
+let hookIndex = 0
 
 function setWipRootAndStartWorking (root: FibreNode) {
     wipRoot = root
     wipRoot.alternate = currentRoot 
     nextWorkUnit = wipRoot
+}
+
+function useState<T>(initialVal: T): [T, SetState<T>] {
+    const oldHook: ReactiveHook = wipFibre?.alternate?.hooks[hookIndex] || {state: initialVal, actions: []}
+    const actions = oldHook.actions
+    let hook: ReactiveHook = {
+        state: oldHook.state,
+        actions: []
+    }
+
+    actions.forEach(action => {
+        if (typeof action === 'function') {
+            hook.state = action(hook.state)
+        } else {
+            hook.state = action
+        }
+    })
+
+    const setState = (action: DispatchState<T>) => {
+        hook.actions.push(action)
+        setWipRootAndStartWorking({
+            dom: currentRoot.dom,
+            alternate: currentRoot,
+            props: currentRoot.props,
+            parent: null
+        })
+    }
+
+    wipFibre.hooks.push(hook)
+    hookIndex++
+    return [hook.state, setState]
 }
 
 const commitWork = (fibre: FibreNode|null) => {
@@ -62,6 +95,12 @@ const commitRootWork = (): void => {
  * 3. return next work fibre
  */
 const performUnitOfWork = (currentFibre: FibreNode): FibreNode => {
+    if (isFunctionComponent) {
+        wipFibre = currentFibre
+        hookIndex = 0
+        currentFibre.hooks = []
+    }
+
     if (!currentFibre.dom&&!isFunctionComponent(currentFibre)) {
         currentFibre.dom = createDOM(currentFibre)
     }
@@ -154,4 +193,4 @@ const workLoop = (deadline: RequestIdleCallbackDeadline) => {
 
 window.requestIdleCallback(workLoop)
 
-export { setWipRootAndStartWorking }
+export { setWipRootAndStartWorking, useState }

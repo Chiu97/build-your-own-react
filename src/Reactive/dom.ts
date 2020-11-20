@@ -10,7 +10,7 @@ const updateDom = (dom: HTMLElement|Text, prevProps: any, nextProps: any) => {
 
     operations.deleteProperties.forEach(key => {
         if (isEvent(key)) {
-            const eventType = key.substring(2)
+            const eventType = key.substring(2).toLocaleLowerCase()
             dom.removeEventListener(eventType, prevProps[key])
         } else {
             // @ts-ignore
@@ -20,7 +20,7 @@ const updateDom = (dom: HTMLElement|Text, prevProps: any, nextProps: any) => {
 
     operations.updateProperties.forEach(key => {
         if (isEvent(key)) {
-            const eventType = key.substring(2)
+            const eventType = key.substring(2).toLocaleLowerCase()
             dom.addEventListener(eventType, nextProps[key])
         } else {
             // @ts-ignore
@@ -30,7 +30,7 @@ const updateDom = (dom: HTMLElement|Text, prevProps: any, nextProps: any) => {
 }
 
 const createDOM = (fibre: FibreNode): HTMLElement|Text => {
-    const dom = fibre.type === DEFS.TEXT_ELEMENT ? document.createTextNode(fibre.props.nodeVal||'') : document.createElement(fibre.type as string)
+    const dom = fibre.type === DEFS.TEXT_ELEMENT ? document.createTextNode(String(fibre.props.nodeValue)||'') : document.createElement(fibre.type as string)
 
     updateDom(dom, {}, fibre.props)
 

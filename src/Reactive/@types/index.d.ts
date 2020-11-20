@@ -7,10 +7,19 @@ interface ReactiveElement {
 interface ReactiveProps {
     children?: ReactiveElement[]|null;
     key?: string,
+    nodeValue?: any,
     [key: string]: any
 }
 
 type ReactiveElementFunction = (props: any) => ReactiveElement
+
+type ReactiveHook = {
+    state: any;
+    actions: Function[]|any[];
+}
+
+type DispatchState<T> = (newState: T) => T
+type SetState<T> = (action: DispatchState<T>|T) => void
 
 interface FibreNode {
     $$type?: Symbol|string;
@@ -23,4 +32,5 @@ interface FibreNode {
     props: ReactiveProps;
     alternate?: FibreNode|null;
     effectTag?: string;
+    hooks?: ReactiveHook[];
 }

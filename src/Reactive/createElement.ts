@@ -5,7 +5,7 @@ const createTextElement = (text: string): ReactiveElement => {
         $$type: DEFS.REACTIVE_ELEMENT,
         type: DEFS.TEXT_ELEMENT,
         props: {
-            nodeVal: text,
+            nodeValue: text,
             children: []
         }
     }
